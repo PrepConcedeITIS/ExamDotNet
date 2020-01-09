@@ -37,7 +37,7 @@ namespace ExamDotNet.Controllers
             var baseLinks = new List<string>();
             try
             {
-                baseLinks = await PageLinkGetter.GetLinks(url);
+                baseLinks = await PageLinkGetter.GetLinks(url, list);
             }
             catch
             {
@@ -53,7 +53,7 @@ namespace ExamDotNet.Controllers
                     var inLinks = new List<string>();
                     try
                     {
-                        inLinks = await PageLinkGetter.GetLinks(link);
+                        inLinks = await PageLinkGetter.GetLinks(link, list);
                     }
                     catch { }
 

@@ -26,7 +26,7 @@ namespace ExamDotNet.Models
             }
         }
 
-        public async static Task<List<string>> GetLinks(string url)
+        public async static Task<List<string>> GetLinks(string url, List<string> currentLinks)
         {
             var uri = new Uri(url);
             var html = await LoadHtml(url);
@@ -35,6 +35,7 @@ namespace ExamDotNet.Models
             var aTags = doc.DocumentNode.Descendants("a");
             var links = aTags.Select(node => node.GetAttributeValue("href", "no href"))
                 .Where(str => str != "no href" && !str.Contains("mailto") && !str.Contains("@") && !str.Contains(@"javascript://"))
+                .Where(str=>!currentLinks.Contains(str))
                 .Where(str=>
                 {
                     try
@@ -49,13 +50,22 @@ namespace ExamDotNet.Models
                         return true;
                     }
                 })
+                .Take(10)
                 .ToList();
             return links;
         }
 
         public async static Task<string> GetBody(string url)
         {
-            var html = await LoadHtml(url);
+            var html = "";
+            try
+            {
+                 html = await LoadHtml(url);
+            }
+            catch
+            {
+                return "Can't get content";
+            }
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
             var body = doc.DocumentNode.InnerText;

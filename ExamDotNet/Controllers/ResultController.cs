@@ -20,7 +20,7 @@ namespace ExamDotNet.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Search(string domain)
+        public IActionResult Search(string domain)
         {
             var domainLocal = domain;
             try
@@ -29,11 +29,11 @@ namespace ExamDotNet.Controllers
                 domainLocal = uri.Host;
             }
             catch { }
-            var result = await GetContent(domain);
+            var result = GetContent(domain);
             return View(result);
         }
 
-        private async Task<List<Tuple<string, string>>> GetContent(string domainStr)
+        private List<Tuple<string, string>> GetContent(string domainStr)
         {
             var domain = context.Domain.FirstOrDefault(domain => domain.Name == domainStr);
             if (domain == null)
