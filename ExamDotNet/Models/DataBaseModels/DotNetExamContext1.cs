@@ -43,9 +43,9 @@ namespace ExamDotNet
 
             modelBuilder.Entity<UrlContent>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("url_content");
+
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Content)
                     .IsRequired()
