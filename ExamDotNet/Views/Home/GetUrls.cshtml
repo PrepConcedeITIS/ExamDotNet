@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewData["Title"] = "GetUrls";
+    
+}
+@model List<string>
+<h1>Search Results</h1>
+
+@foreach(var link in Model)
+{
+    <p>@link</p>
+}
+<form method="post" asp-action="SaveToDb">
+    <input type="hidden" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model)" name="links"/>
+    <button type="submit">Save to DB</button>
+</form>
