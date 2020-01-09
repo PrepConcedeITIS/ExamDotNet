@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewData["Title"] = "Search";
+}
+@model List<Tuple<string, string>>
+
+<a asp-controller="Result" asp-action="Results">Back</a>
+<table>
+    <tr>
+        <th>
+            Url
+        </th>
+        <th>
+            Content
+        </th>
+    </tr>
+    @foreach (var tuple in Model)
+    {
+        <tr>
+            <th>
+                @tuple.Item1
+            </th>
+            <th>
+                @tuple.Item2
+            </th>
+        </tr>
+    }
+</table>

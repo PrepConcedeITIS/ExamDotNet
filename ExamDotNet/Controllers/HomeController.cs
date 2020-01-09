@@ -26,36 +26,45 @@ namespace ExamDotNet.Controllers
             return View();
         }
 
-        public IActionResult Results()
-        {
-            return View();
-        }
+
 
         [HttpPost]
         public async Task<IActionResult> GetUrls(string url, int depth)
         {
             int i = 1;
             url = NormilizeLink(url);
-            var dict = new Dictionary<string, string>();
             var list = new List<string>();
-            var baseLinks = await PageLinkGetter.GetLinks(url);
+            var baseLinks = new List<string>();
+            try
+            {
+                baseLinks = await PageLinkGetter.GetLinks(url);
+            }
+            catch
+            {
+                return View(new List<string>());
+            }
             baseLinks = baseLinks.Select(str => PageLinkGetter.ToCorrectFormat(url, str)).ToList();
             list.AddRange(baseLinks);
             while (i != depth)
             {
                 var newBaseLinks = new List<string>();
-                foreach(var link in baseLinks)
+                foreach (var link in baseLinks)
                 {
-                    var inLinks = await PageLinkGetter.GetLinks(link);
+                    var inLinks = new List<string>();
+                    try
+                    {
+                        inLinks = await PageLinkGetter.GetLinks(link);
+                    }
+                    catch { }
 
-                    foreach(var inLink in inLinks)
+                    foreach (var inLink in inLinks)
                     {
                         if (!newBaseLinks.Contains(inLink))
                             newBaseLinks.Add(PageLinkGetter.ToCorrectFormat(url, inLink));
                     }
                 }
 
-                foreach(var link in newBaseLinks)
+                foreach (var link in newBaseLinks)
                 {
                     if (!list.Contains(link))
                         list.Add(link);
@@ -65,13 +74,13 @@ namespace ExamDotNet.Controllers
             return View(list.Distinct().ToList());
         }
 
-        [HttpPost]
+
         public async Task<IActionResult> SaveToDb(string links)
         {
             var listLinks = JsonConvert.DeserializeObject<List<string>>(links);
             var body = await PageLinkGetter.GetBody(listLinks[0]);
             await SaveToDb(listLinks);
-            return null;
+            return View("~/Views/Result/Results.cshtml");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
